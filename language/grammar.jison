@@ -18,6 +18,11 @@
         return ast_action('conditional', data);
     }
 
+    function ast_action_while(condition, actions) {
+        data = { condition: condition, actions: actions };
+        return ast_action('while', data);
+    }
+
     function ast_action_assign(id, expr) {
         data = { identifier: id, expression: expr};
         return ast_action('assign', data)
@@ -81,6 +86,9 @@ actions
 action
     : t_IF expression code_block
         { $$ = ast_action_conditional($2, $3); }
+
+    | t_WHILE expression code_block
+        { $$ = ast_action_while($2, $3); }
 
     | IDENTIFIER '=' expression
         { $$ = ast_action_assign($1, $3); }
