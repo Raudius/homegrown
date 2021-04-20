@@ -12,6 +12,7 @@ const SYMBOLS = {
 
     /* Tokens */
     't_IF': /if/,
+    't_WHILE': /while/,
     't_FUN': /fun/,
     't_RETURN': /return/,
     't_NULL': /null/,

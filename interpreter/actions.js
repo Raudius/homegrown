@@ -15,7 +15,17 @@ function actionAssign(env, action_data) {
  */
 function actionConditional(env, action_data) {
     let condition = evalExpression(env, action_data.condition);
-    if (!!condition) {
+    if (condition) {
+        performActions(env, action_data.actions);
+    }
+}
+
+/**
+ * @param {Environment} env
+ * @param {{}} action_data
+ */
+function actionWhile(env, action_data) {
+    while (evalExpression(env, action_data.condition)) {
         performActions(env, action_data.actions);
     }
 }
@@ -44,7 +54,8 @@ function actionReturn(env, action_data) {
 function getActionCallableFromType(type) {
     switch (type) {
         case 'assign': return actionAssign;
-        case 'conditional': return actionConditional
+        case 'conditional': return actionConditional;
+        case 'while': return actionWhile;
         case 'lone_expression': return actionLoneExpression;
         case 'return': return actionReturn;
 
