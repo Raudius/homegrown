@@ -8,12 +8,11 @@
  */
 class Environment {
     /**
-     * @param parent
-     * @param assigns
+     * @param {Environment} parent
      */
-    constructor(parent=null, assigns={}) {
+    constructor(parent=null) {
         this.parent = parent;
-        this.assigns = assigns;
+        this.assigns = {};
     }
 
     /**
@@ -35,7 +34,7 @@ class Environment {
      * @returns {Promise<Response>|null|*}
      */
     fetch(key) {
-        if (this.assigns.hasOwnProperty(key)) {
+        if (this.hasAssign(key)) {
             return this.assigns[key];
         }
 
@@ -44,6 +43,16 @@ class Environment {
         }
 
         return null;
+    }
+
+    /**
+     * Returns whether the key has an assign in this environment.
+     *
+     * @param {String} key
+     * @returns {boolean}
+     */
+    hasAssign(key) {
+        return this.assigns.hasOwnProperty(key);
     }
 }
 

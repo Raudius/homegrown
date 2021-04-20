@@ -1,7 +1,6 @@
 // Sample homegrown script, run with:
 // npm run sample
 
-
 // Basic expressions and variable assignment
 a = 1
 b = a * 2
@@ -33,3 +32,7 @@ while (i <= 10) {
   log(i)
   i = i + 1
 }
+
+// Stop program
+return 0
+log('This code will not execute')
