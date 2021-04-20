@@ -12,6 +12,12 @@ function isLiteral(v) {
         || typeof v === 'number';
 }
 
+/**
+ * @param {Environment} env
+ * @param {String[]} args
+ * @param {[]} vals
+ * @returns {Environment}
+ */
 function createEnvironmentForFunction(env, args, vals) {
     if (args.length !== vals.length) {
         throw new Error('Provided arguments don\'t match method signature');
@@ -24,6 +30,11 @@ function createEnvironmentForFunction(env, args, vals) {
     return new_env;
 }
 
+/**
+ * @param {Environment} env
+ * @param {{}} expression
+ * @returns {Function}
+ */
 function evalExprFunction(env, expression) {
     return (...arg_vals) => {
         const new_env = createEnvironmentForFunction(env, expression.arguments, arg_vals)
@@ -32,6 +43,13 @@ function evalExprFunction(env, expression) {
     };
 }
 
+/**
+ * Evaluate the result of an operation.
+ *
+ * @param {Environment} env
+ * @param {{}} expression
+ * @returns {number|boolean|string}
+ */
 function evalExprOperation(env, expression) {
     const term1 = evalExpression(env, expression.term1);
     const term2 = evalExpression(env, expression.term2);
@@ -54,6 +72,13 @@ function evalExprOperation(env, expression) {
     }
 }
 
+/**
+ * Evaluates the result of a function.
+ *
+ * @param {Environment} env
+ * @param {{}} action_data
+ * @returns {Function|string|number|boolean|null}
+ */
 function evalExprCallFunction(env, action_data) {
     const func = evalExpression(env, action_data.function);
     const arguments = action_data.arguments ?? [];
@@ -61,6 +86,13 @@ function evalExprCallFunction(env, action_data) {
     return func.apply(this, args);
 }
 
+/**
+ * Evaluates an expression to an assignable type.
+ *
+ * @param {Environment} env
+ * @param {{}|string|number|boolean|null} expression
+ * @returns {Function|string|number|boolean|null}
+ */
 function evalExpression (env, expression) {
     if (isLiteral(expression)) {
         return expression;
