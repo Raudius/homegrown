@@ -9,7 +9,7 @@ Homegrown is an extensible language written in JavaScript.
 
 ## Uses
 Homegrown was inspired by [Airscript](https://airtable.com/developers/scripting).  
-As such, the intended use-case for homegrown is as a dumbed-down scripting API to embed inside web-applications. 
+As such, the intended use-case for Homegrown is as a dumbed-down scripting API to embed inside web-applications. 
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
