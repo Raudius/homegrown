@@ -79,7 +79,7 @@ function performAction (env, action) {
 function performActions (env, actions) {
     for (let i=0; i<actions.length; i++) {
         performAction(env, actions[i]);
-        if (env.fetch('__return')) {
+        if (env.hasAssign('__return')) {
             break;
         }
     }
