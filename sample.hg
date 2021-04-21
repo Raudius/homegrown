@@ -21,6 +21,13 @@ sum = fun (a,b) {
 // Function call
 d = sum(a,b)
 
+// Character escapes
+str = 'Quote: \''
+str = 'New-line: \n'
+str = 'Tab: \t'
+str = 'Back-slash: \\'
+
+
 // Using built-in functions declared in root environment
 // See main.js
 tau = pi * 2
@@ -34,5 +41,6 @@ while (i <= 10) {
 }
 
 // Stop program
+log ('Hello \'World\'')
 return 0
 log('This code will not execute')
