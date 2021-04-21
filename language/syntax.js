@@ -20,7 +20,7 @@ const SYMBOLS = {
     /* Literals */
     'lit_BOOL': /true|false/,
     'lit_NUM': /\d+(\.\d+)?/,
-    'lit_STR': /'[^']*'/,
+    'lit_STR': /'(\\.|[^'])*'/,
 
     /* User-defined or built-in identifier */
     'IDENTIFIER': /[A-z][A-z1-9]*/,
