@@ -68,7 +68,7 @@ function getActionCallableFromType(type) {
  * @param {{}} action
  */
 function performAction (env, action) {
-    const callable = getActionCallableFromType(action.action);
+    const callable = getActionCallableFromType(action.action_type);
     callable(env, action.data);
 }
 

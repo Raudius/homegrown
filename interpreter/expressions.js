@@ -1,16 +1,5 @@
 const Environment = require('./environment.js').Environment;
 
-/**
- * Helper function to determine whether the variable is a literal.
- * @param {*} v
- * @returns {boolean}
- */
-function isLiteral(v) {
-    return v === null
-        || typeof v === 'boolean'
-        || typeof v === 'string'
-        || typeof v === 'number';
-}
 
 /**
  * @param {Environment} env
@@ -35,7 +24,7 @@ function createEnvironmentForFunction(env, args, vals) {
  * @param {{}} expression
  * @returns {Function}
  */
-function evalExprFunction(env, expression) {
+function evalFuncDefinition(env, expression) {
     return (...arg_vals) => {
         const new_env = createEnvironmentForFunction(env, expression.arguments, arg_vals)
         performActions(new_env, expression.body);
@@ -50,7 +39,7 @@ function evalExprFunction(env, expression) {
  * @param {{}} expression
  * @returns {number|boolean|string}
  */
-function evalExprOperation(env, expression) {
+function evalOperation(env, expression) {
     const term1 = evalExpression(env, expression.term1);
     const term2 = evalExpression(env, expression.term2);
 
@@ -76,46 +65,66 @@ function evalExprOperation(env, expression) {
  * Evaluates the result of a function.
  *
  * @param {Environment} env
- * @param {{}} action_data
+ * @param {{}} expression
  * @returns {Function|string|number|boolean|null}
  */
-function evalExprCallFunction(env, action_data) {
-    const func = evalExpression(env, action_data.function);
-    const arguments = action_data.arguments ?? [];
+function evalFuncCall(env, expression) {
+    const func = evalExpression(env, expression.function);
+    const arguments = expression.arguments ?? [];
     const args = arguments.map(ex => { return evalExpression(env, ex) });
     return func.apply(this, args);
+}
+
+/**
+ * Returns the value of the referred identifier.
+ *
+ * @param {Environment} env
+ * @param {{}} data
+ * @returns {Function|string|number|boolean|null}
+ */
+function evalReference(env, data) {
+    const id = data.reference;
+    return env.fetch(id);
+}
+
+/**
+ * @param {Environment} env
+ * @param {Function|string|number|boolean|null} data
+ * @returns {Function|string|number|boolean|null}
+ */
+function evalLiteral(env, data) {
+    return data;
+}
+
+/**
+ * Returns the function with which the expression can be evaluated.
+ *
+ * @param {String} type
+ * @returns {Function}
+ */
+function getEvalFunction(type) {
+    switch (type) {
+        case 'literal': return evalLiteral;
+        case 'ref': return evalReference;
+        case 'define_func': return evalFuncDefinition;
+        case 'call_func': return evalFuncCall;
+        case 'operation': return evalOperation;
+    }
+
+    throw new Error('Unknown expression type: ' + type);
 }
 
 /**
  * Evaluates an expression to an assignable type.
  *
  * @param {Environment} env
- * @param {{}|string|number|boolean|null} expression
+ * @param {{}} expression
  * @returns {Function|string|number|boolean|null}
  */
 function evalExpression (env, expression) {
-    if (isLiteral(expression)) {
-        return expression;
-    }
-
-    if (expression.hasOwnProperty('reference')) {
-        const id = expression.reference;
-        return env.fetch(id);
-    }
-
-    if (expression.hasOwnProperty('body')) {
-        return evalExprFunction(env, expression);
-    }
-
-    if (expression.hasOwnProperty('operand')) {
-        return evalExprOperation(env, expression);
-    }
-
-    if (expression.hasOwnProperty('function')) {
-        return evalExprCallFunction(env, expression);
-    }
-
-    console.error('Unknown expression');
+    let type = expression.expression_type;
+    const evalFunction = getEvalFunction(type);
+    return evalFunction(env, expression.data);
 }
 
 module.exports = {
