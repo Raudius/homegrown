@@ -7,10 +7,7 @@
 /* AST generator functions */
 %{
     function ast_action(name, data) {
-        return {
-            action: name,
-            data: data
-        };
+        return { action_type: name, data: data };
     }
 
     function ast_action_conditional(condition, actions) {
@@ -25,7 +22,7 @@
 
     function ast_action_assign(id, expr) {
         data = { identifier: id, expression: expr};
-        return ast_action('assign', data)
+        return ast_action('assign', data);
     }
 
     function ast_lone_expression(expression) {
@@ -38,19 +35,45 @@
         return ast_action('return', data);
     }
 
+    function ast_expression(type, data) {
+        return { expression_type: type, data: data };
+    }
+
     function ast_expr_operation(operand, term1, term2) {
-        return {
+        data = {
             operand: operand,
             term1: term1,
             term2: term2
         };
+
+        return ast_expression('operation', data);
     }
 
     function ast_expr_call_func(func_name, func_args) {
-        return {
+        data = {
             function: func_name,
             arguments: func_args
-        }
+        };
+
+        return ast_expression('call_func', data);
+    }
+
+    function ast_expr_define_func(func_args, func_body) {
+        data = {
+            arguments: func_args,
+            body: func_body
+        };
+
+        return ast_expression('define_func', data);
+    }
+
+    function ast_expr_ref(id) {
+        data = { reference: id };
+        return ast_expression('ref', data);
+    }
+
+    function ast_expr_literal(value) {
+        return ast_expression('literal', value);
     }
 %}
 
@@ -110,18 +133,6 @@ expression
     | o_BRACKET expression c_BRACKET { $$ = $2 }
     ;
 
-func_call_expr
-    : ref o_BRACKET call_args c_BRACKET
-        {{ $$ = ast_expr_call_func($1, $3); }}
-    ;
-
-/* Literals */
-literal
-    : lit_BOOL { $$ = yytext === 'true'; }
-    | lit_NUM { $$ = Number(yytext); }
-    | lit_STR { $$ = yytext.substring(1, yytext.length-1); }
-    | t_NULL { $$ = null; }
-    ;
 /* Math/logical operations */
 operation_expr
     : expression '+' expression { $$ = ast_expr_operation($2, $1, $3); }
@@ -138,18 +149,28 @@ operation_expr
     | expression '|' expression { $$ = ast_expr_operation($2, $1, $3); }
     ;
 
+/* Define a function */
 func_define_expr
     : t_FUN o_BRACKET func_args c_BRACKET code_block
-        {{
-            $$ = {
-                arguments: $3,
-                body: $5
-            }
-        }}
+        {{ $$ = ast_expr_define_func($3, $5); }}
+    ;
+
+/* Function call */
+func_call_expr
+    : ref o_BRACKET call_args c_BRACKET
+        {{ $$ = ast_expr_call_func($1, $3); }}
     ;
 
 /* Reference to a variable. */
-ref : IDENTIFIER {{ $$ = { reference: $1 } }};
+ref : IDENTIFIER {{ $$ = ast_expr_ref($1); }};
+
+/* Literals */
+literal
+    : lit_BOOL { $$ = ast_expr_literal(yytext === 'true'); }
+    | lit_NUM { $$ = ast_expr_literal(Number(yytext)); }
+    | lit_STR { $$ = ast_expr_literal( yytext.substring(1, yytext.length-1) ); }
+    | t_NULL { $$ = ast_expr_literal(null); }
+    ;
 
 /* Function arguments in the signature: a list of identifiers (or void) */
 func_args : /* VOID */ | id_list;
