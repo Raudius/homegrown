@@ -1,5 +1,17 @@
 const Environment = require('./environment.js').Environment;
 
+/**
+ * Replace the 'escaped' characters with the expected characters.
+ *
+ * @param str
+ * @returns {*}
+ */
+function escapeCharacters(str) {
+    return str.replace(/\\'/g, "'")
+        .replace(/\\n/g, '\n')
+        .replace(/\\t'/g, '\t')
+        .replace(/\\\\/g, '\\');
+}
 
 /**
  * @param {Environment} env
@@ -93,6 +105,9 @@ function evalReference(env, data) {
  * @returns {Function|string|number|boolean|null}
  */
 function evalLiteral(env, data) {
+    if (typeof data === 'string') {
+        data = escapeCharacters(data);
+    }
     return data;
 }
 
