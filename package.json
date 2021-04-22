@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npm run compile && node main.js",
     "compile": "node node_modules/.bin/jison language/grammar.jison && mv grammar.js language/grammar.js",
-    "sample": "node main.js < sample.hg"
+    "sample": "node main.js < sample.hg",
+    "eslint": "eslint --ext .js ."
   },
   "keywords": [],
   "author": "",
@@ -14,5 +15,12 @@
   "dependencies": {
     "lex": "^1.7.9",
     "jison": "^0.3.10"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1"
   }
 }

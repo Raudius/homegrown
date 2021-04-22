@@ -6,12 +6,13 @@ const fs = require('fs');
 const program = fs.readFileSync(0, 'utf-8');
 
 // Create root environment (optional)
-const root_env = new Environment();
-root_env.assign('log', console.log);
-root_env.assign('pi', Math.PI);
+const rootEnv = new Environment();
+rootEnv.assign('log', console.log);
+rootEnv.assign('pi', Math.PI);
 
 // Execute program
-interpreter.execute(program, root_env);
+interpreter.execute(program, rootEnv)
+;
 
 // View final program state
 // console.log(root_env.assigns);
