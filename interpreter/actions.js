@@ -89,4 +89,4 @@ module.exports = {
     performActions
 }
 
-const evalExpression = require('./expressions.js').evalExpression;
+const evalExpression = require('./expressions').evalExpression;

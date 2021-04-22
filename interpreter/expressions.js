@@ -1,4 +1,4 @@
-const Environment = require('./environment.js').Environment;
+const Environment = require('./environment').Environment;
 
 /**
  * Replace the 'escaped' characters with the expected characters.
@@ -146,4 +146,4 @@ module.exports = {
     evalExpression
 }
 
-const performActions = require('./actions.js').performActions;
+const performActions = require('./actions').performActions;

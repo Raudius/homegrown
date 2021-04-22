@@ -1,5 +1,5 @@
-let parser = require('../language/parser.js');
-let performActions = require('./actions.js').performActions;
+let parser = require('../language/parser');
+let performActions = require('./actions').performActions;
 let Environment = require('./environment').Environment;
 
 /**

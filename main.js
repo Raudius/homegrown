@@ -1,5 +1,5 @@
-const interpreter = require('./interpreter/interpreter.js');
-const Environment = require('./interpreter/environment.js').Environment;
+const interpreter = require('./interpreter/interpreter');
+const Environment = require('./interpreter/environment').Environment;
 const fs = require('fs');
 
 // Load program
