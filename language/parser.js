@@ -1,6 +1,6 @@
 let Lexer = require("lex");
-let symbols = require('./syntax.js');
-let Parser = require('./grammar.js').Parser;
+let symbols = require('./syntax');
+let Parser = require('./grammar').Parser;
 
 /**
  * Initiate the parser and pass our lexer to it.
