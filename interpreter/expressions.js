@@ -1,4 +1,5 @@
 const Environment = require('./environment').Environment;
+const err = require('./errors');
 
 /**
  * Replace the 'escaped' characters with the expected characters.
@@ -21,7 +22,7 @@ function escapeCharacters (str) {
  */
 function createEnvironmentForFunction (env, args, vals) {
   if (args.length !== vals.length) {
-    throw new Error('Provided arguments don\'t match method signature');
+    err.ArgumentMismatch();
   }
   const newEnv = new Environment(env);
   for (let i = 0; i < args.length; i++) {
@@ -69,7 +70,7 @@ function evalOperation (env, expression) {
     case '&': return term1 && term2;
     case '|': return term1 || term2;
 
-    default: throw new Error('Unknown operand ' + expression.operand);
+    default: err.UnknownOperation(expression.operand);
   }
 }
 
@@ -125,7 +126,7 @@ function getEvalFunction (type) {
     case 'operation': return evalOperation;
   }
 
-  throw new Error('Unknown expression type: ' + type);
+  err.UnknownExpressionType(type);
 }
 
 /**
