@@ -48,6 +48,7 @@ const SYMBOLS = {
  */
 const META_SYMBOLS = {
   Comment: /\/\/.*/,
+  SemiColon: /;/,
   WhiteSpace: /\s/
 };
 
