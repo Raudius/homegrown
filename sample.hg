@@ -40,7 +40,13 @@ while (i <= 10) {
   i = i + 1
 }
 
+// Semi-colons are mostly ignored
+sum(1,2);
+// They don't denote the end of a statement.
+;;;sum;(;1;,2;);;;
+
+
 // Stop program
-log ('Hello \'World\'')
+log ('Hello World')
 return 0
 log('This code will not execute')
