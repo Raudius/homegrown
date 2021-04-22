@@ -6,11 +6,11 @@ const Environment = require('./environment').Environment;
  * @param str
  * @returns {*}
  */
-function escapeCharacters(str) {
-    return str.replace(/\\'/g, "'")
-        .replace(/\\n/g, '\n')
-        .replace(/\\t'/g, '\t')
-        .replace(/\\\\/g, '\\');
+function escapeCharacters (str) {
+  return str.replace(/\\'/g, "'")
+    .replace(/\\n/g, '\n')
+    .replace(/\\t'/g, '\t')
+    .replace(/\\\\/g, '\\');
 }
 
 /**
@@ -19,16 +19,16 @@ function escapeCharacters(str) {
  * @param {[]} vals
  * @returns {Environment}
  */
-function createEnvironmentForFunction(env, args, vals) {
-    if (args.length !== vals.length) {
-        throw new Error('Provided arguments don\'t match method signature');
-    }
-    const new_env = new Environment(env);
-    for (let i=0; i<args.length; i++) {
-        new_env.assign(args[i], vals[i]);
-    }
+function createEnvironmentForFunction (env, args, vals) {
+  if (args.length !== vals.length) {
+    throw new Error('Provided arguments don\'t match method signature');
+  }
+  const newEnv = new Environment(env);
+  for (let i = 0; i < args.length; i++) {
+    newEnv.assign(args[i], vals[i]);
+  }
 
-    return new_env;
+  return newEnv;
 }
 
 /**
@@ -36,12 +36,12 @@ function createEnvironmentForFunction(env, args, vals) {
  * @param {{}} expression
  * @returns {Function}
  */
-function evalFuncDefinition(env, expression) {
-    return (...arg_vals) => {
-        const new_env = createEnvironmentForFunction(env, expression.arguments, arg_vals)
-        performActions(new_env, expression.body);
-        return new_env.fetch('__return');
-    };
+function evalFuncDefinition (env, expression) {
+  return (...argVals) => {
+    const newEnv = createEnvironmentForFunction(env, expression.arguments, argVals);
+    performActions(newEnv, expression.body);
+    return newEnv.fetch('__return');
+  };
 }
 
 /**
@@ -51,26 +51,26 @@ function evalFuncDefinition(env, expression) {
  * @param {{}} expression
  * @returns {number|boolean|string}
  */
-function evalOperation(env, expression) {
-    const term1 = evalExpression(env, expression.term1);
-    const term2 = evalExpression(env, expression.term2);
+function evalOperation (env, expression) {
+  const term1 = evalExpression(env, expression.term1);
+  const term2 = evalExpression(env, expression.term2);
 
-    switch (expression.operand) {
-        case '+': return term1 + term2;
-        case '-': return term1 - term2;
-        case '*': return term1 * term2;
-        case '/': return term1 / term2;
-        case '>': return term1 > term2;
-        case '<': return term1 < term2;
-        case '>=': return term1 >= term2;
-        case '<=': return term1 <= term2;
-        case '==': return term1 === term2;
-        case '!=': return term1 !== term2;
-        case '&': return term1 && term2;
-        case '|': return term1 || term2;
+  switch (expression.operand) {
+    case '+': return term1 + term2;
+    case '-': return term1 - term2;
+    case '*': return term1 * term2;
+    case '/': return term1 / term2;
+    case '>': return term1 > term2;
+    case '<': return term1 < term2;
+    case '>=': return term1 >= term2;
+    case '<=': return term1 <= term2;
+    case '==': return term1 === term2;
+    case '!=': return term1 !== term2;
+    case '&': return term1 && term2;
+    case '|': return term1 || term2;
 
-        default: throw new Error('Unknown operand ' + expression.operand);
-    }
+    default: throw new Error('Unknown operand ' + expression.operand);
+  }
 }
 
 /**
@@ -80,11 +80,10 @@ function evalOperation(env, expression) {
  * @param {{}} expression
  * @returns {Function|string|number|boolean|null}
  */
-function evalFuncCall(env, expression) {
-    const func = evalExpression(env, expression.function);
-    const arguments = expression.arguments ?? [];
-    const args = arguments.map(ex => { return evalExpression(env, ex) });
-    return func.apply(this, args);
+function evalFuncCall (env, expression) {
+  const func = evalExpression(env, expression.function);
+  const args = expression.arguments.map(ex => { return evalExpression(env, ex); });
+  return func.apply(this, args);
 }
 
 /**
@@ -94,9 +93,9 @@ function evalFuncCall(env, expression) {
  * @param {{}} data
  * @returns {Function|string|number|boolean|null}
  */
-function evalReference(env, data) {
-    const id = data.reference;
-    return env.fetch(id);
+function evalReference (env, data) {
+  const id = data.reference;
+  return env.fetch(id);
 }
 
 /**
@@ -104,11 +103,11 @@ function evalReference(env, data) {
  * @param {Function|string|number|boolean|null} data
  * @returns {Function|string|number|boolean|null}
  */
-function evalLiteral(env, data) {
-    if (typeof data === 'string') {
-        data = escapeCharacters(data);
-    }
-    return data;
+function evalLiteral (env, data) {
+  if (typeof data === 'string') {
+    data = escapeCharacters(data);
+  }
+  return data;
 }
 
 /**
@@ -117,16 +116,16 @@ function evalLiteral(env, data) {
  * @param {String} type
  * @returns {Function}
  */
-function getEvalFunction(type) {
-    switch (type) {
-        case 'literal': return evalLiteral;
-        case 'ref': return evalReference;
-        case 'define_func': return evalFuncDefinition;
-        case 'call_func': return evalFuncCall;
-        case 'operation': return evalOperation;
-    }
+function getEvalFunction (type) {
+  switch (type) {
+    case 'literal': return evalLiteral;
+    case 'ref': return evalReference;
+    case 'define_func': return evalFuncDefinition;
+    case 'call_func': return evalFuncCall;
+    case 'operation': return evalOperation;
+  }
 
-    throw new Error('Unknown expression type: ' + type);
+  throw new Error('Unknown expression type: ' + type);
 }
 
 /**
@@ -137,13 +136,13 @@ function getEvalFunction(type) {
  * @returns {Function|string|number|boolean|null}
  */
 function evalExpression (env, expression) {
-    let type = expression.expression_type;
-    const evalFunction = getEvalFunction(type);
-    return evalFunction(env, expression.data);
+  const type = expression.expression_type;
+  const evalFunction = getEvalFunction(type);
+  return evalFunction(env, expression.data);
 }
 
 module.exports = {
-    evalExpression
-}
+  evalExpression
+};
 
 const performActions = require('./actions').performActions;

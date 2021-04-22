@@ -1,26 +1,26 @@
-let parser = require('../language/parser');
-let performActions = require('./actions').performActions;
-let Environment = require('./environment').Environment;
+const parser = require('../language/parser');
+const performActions = require('./actions').performActions;
+const Environment = require('./environment').Environment;
 
 /**
  * Runs a program in the specified environment.
  * If no environment is specified, a fresh (empty) one is created.
  *
  * @param {String} input
- * @param {Environment|null} root_env
+ * @param {Environment|null} rootEnv
  */
-function execute (input, root_env=null) {
-    console.time('Compilation');
-    let actions = parser.parse(input);
-    console.timeEnd('Compilation');
+function execute (input, rootEnv = null) {
+  console.time('Compilation');
+  const actions = parser.parse(input);
+  console.timeEnd('Compilation');
 
-    root_env = root_env ?? new Environment();
+  rootEnv = rootEnv ?? new Environment();
 
-    console.time('Runtime');
-    performActions(root_env, actions);
-    console.timeEnd('Runtime');
+  console.time('Runtime');
+  performActions(rootEnv, actions);
+  console.timeEnd('Runtime');
 }
 
 module.exports = {
-    execute
-}
+  execute
+};

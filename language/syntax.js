@@ -2,44 +2,44 @@
  * Export language symbols in precedence order.
  */
 const SYMBOLS = {
-    'EOF': /$/,
+  EOF: /$/,
 
-    /* Casings */
-    'o_BRACKET': /\(/,
-    'c_BRACKET': /\)/,
-    'o_CURLY': /{/,
-    'c_CURLY': /}/,
+  /* Casings */
+  o_BRACKET: /\(/,
+  c_BRACKET: /\)/,
+  o_CURLY: /{/,
+  c_CURLY: /}/,
 
-    /* Tokens */
-    't_IF': /if/,
-    't_WHILE': /while/,
-    't_FUN': /fun/,
-    't_RETURN': /return/,
-    't_NULL': /null/,
+  /* Tokens */
+  t_IF: /if/,
+  t_WHILE: /while/,
+  t_FUN: /fun/,
+  t_RETURN: /return/,
+  t_NULL: /null/,
 
-    /* Literals */
-    'lit_BOOL': /true|false/,
-    'lit_NUM': /\d+(\.\d+)?/,
-    'lit_STR': /'(\\.|[^'])*'/,
+  /* Literals */
+  lit_BOOL: /true|false/,
+  lit_NUM: /\d+(\.\d+)?/,
+  lit_STR: /'(\\.|[^'])*'/,
 
-    /* User-defined or built-in identifier */
-    'IDENTIFIER': /[A-z][A-z1-9]*/,
+  /* User-defined or built-in identifier */
+  IDENTIFIER: /[A-z][A-z1-9]*/,
 
-    /* Symbols */
-    '+': /\+/,
-    '-': /-/,
-    '*': /\*/,
-    '/': /\//,
-    '<': /</,
-    '>': />/,
-    '<=': /<=/,
-    '>=': />=/,
-    '==': /==/,
-    '!=': /!=/,
-    '=': /=/,
-    ',': /,/,
-    '&': /&/,
-    '|': /\|/
+  /* Symbols */
+  '+': /\+/,
+  '-': /-/,
+  '*': /\*/,
+  '/': /\//,
+  '<': /</,
+  '>': />/,
+  '<=': /<=/,
+  '>=': />=/,
+  '==': /==/,
+  '!=': /!=/,
+  '=': /=/,
+  ',': /,/,
+  '&': /&/,
+  '|': /\|/
 };
 
 /**
@@ -47,11 +47,11 @@ const SYMBOLS = {
  * They are simply the syntactic sugar of the language.
  */
 const META_SYMBOLS = {
-    'Comment': /\/\/.*/,
-    'WhiteSpace': /\s/
+  Comment: /\/\/.*/,
+  WhiteSpace: /\s/
 };
 
 module.exports = {
-    SYMBOLS,
-    META_SYMBOLS
-}
+  SYMBOLS,
+  META_SYMBOLS
+};
