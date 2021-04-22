@@ -59,7 +59,7 @@ function getActionCallableFromType (type) {
     case 'lone_expression': return actionLoneExpression;
     case 'return': return actionReturn;
 
-    default: throw new Error('Unknown action: ' + type);
+    default: err.UnknownActionType(type);
   }
 }
 
@@ -90,3 +90,4 @@ module.exports = {
 };
 
 const evalExpression = require('./expressions').evalExpression;
+const err = require('./errors');
