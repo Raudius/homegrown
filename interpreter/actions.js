@@ -44,7 +44,7 @@ function actionLoneExpression (env, actionData) {
  */
 function actionReturn (env, actionData) {
   const val = evalExpression(env, actionData.expression);
-  env.assign('__return', val);
+  env.setReturn(val);
 }
 
 /**
