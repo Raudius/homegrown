@@ -6,12 +6,23 @@ a = 1
 b = a * 2
 c = a * b + a
 string = 'Homegrown tomatoes.'
-boolean_expression = true | false
+boolean_expression = true | false & (a < 1)
 
 // if statement
 if (a < 2) {
   a = 2
 }
+
+// Character escapes
+str = 'Quote: \''
+str = 'New-line: \n'
+str = 'Tab: \t'
+str = 'Back-slash: \\'
+
+// Using built-in functions declared in root environment
+// See sample.js
+tau = pi * 2
+log('Hello world!')
 
 // Function declaration
 sum = fun (a,b) {
@@ -20,25 +31,14 @@ sum = fun (a,b) {
 
 // Function call
 d = sum(a,b)
-
-// Character escapes
-str = 'Quote: \''
-str = 'New-line: \n'
-str = 'Tab: \t'
-str = 'Back-slash: \\'
-
-
-// Using built-in functions declared in root environment
-// See main.js
-tau = pi * 2
-log('Hello world!')
+log(d)
 
 // Loop
 i = 1
 while (i <= 10) {
-  log(i)
-  i = i + 1
+  i = i * 10
 }
+log(i)
 
 // Semi-colons are mostly ignored
 sum(1,2);
@@ -46,7 +46,10 @@ sum(1,2);
 ;;;sum;(;1;,2;);;;
 
 
-// Stop program
-log ('Hello World')
-return 0
-log('This code will not execute')
+// Stop program by returning
+if (pi > 3 & pi < 4) {
+  log ('Bye world!')
+  return 'Done!';
+}
+
+log ('This will never run');
