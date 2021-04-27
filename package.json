@@ -2,11 +2,11 @@
   "name": "homegrown",
   "version": "0.0.1",
   "description": "",
-  "main": "main.js",
+  "main": "sample/sample.js",
   "scripts": {
-    "build": "npm run compile && node main.js",
-    "compile": "node node_modules/.bin/jison language/grammar.jison && mv grammar.js language/grammar.js",
-    "sample": "node main.js < sample.hg",
+    "build": "npm run compile && node sample/sample.js",
+    "compile": "node node_modules/.bin/jison language/grammar.jison -o language/grammar.js",
+    "sample": "node sample/sample.js < sample/sample.hg",
     "eslint": "eslint --ext .js ."
   },
   "keywords": [],
