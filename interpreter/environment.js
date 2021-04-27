@@ -1,3 +1,5 @@
+const KEY_RETURN = '__return';
+
 /**
  * An environment defines the state and scope of the program.
  *
@@ -8,8 +10,8 @@
  */
 class Environment {
   /**
-     * @param {Environment} parent
-     */
+   * @param {Environment} parent
+   */
   constructor (parent = null) {
     this.parent = parent;
     this.assigns = {};
@@ -20,8 +22,8 @@ class Environment {
      * This will shadow any previous assigns with the same key
      * on parent environments
      *
-     * @param key
-     * @param value
+     * @param {String} key
+     * @param {*} value
      */
   assign (key, value) {
     this.assigns[key] = value;
@@ -31,7 +33,7 @@ class Environment {
      * Fetches a variable from the environment.
      *
      * @param {String} key
-     * @returns {Promise<Response>|null|*}
+     * @returns {*}
      */
   fetch (key) {
     if (this.hasAssign(key)) {
@@ -46,13 +48,29 @@ class Environment {
   }
 
   /**
-     * Returns whether the key has an assign in this environment.
-     *
-     * @param {String} key
-     * @returns {boolean}
-     */
+   * Returns whether the key has an assign in this environment.
+   *
+   * @param {String} key
+   * @returns {boolean}
+   */
   hasAssign (key) {
     return this.assigns.hasOwnProperty(key);
+  }
+
+  /**
+   * Sets the return value for the environment.
+   * @param value
+   */
+  setReturn (value) {
+    this.assign(KEY_RETURN, value);
+  }
+
+  /**
+   * Gets the return value for the environment
+   * @returns {*}
+   */
+  getReturn () {
+    return this.fetch(KEY_RETURN);
   }
 }
 

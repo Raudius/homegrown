@@ -2,25 +2,26 @@ const parser = require('../language/parser');
 const performActions = require('./actions').performActions;
 const Environment = require('./environment').Environment;
 
-/**
- * Runs a program in the specified environment.
- * If no environment is specified, a fresh (empty) one is created.
- *
- * @param {String} input
- * @param {Environment|null} rootEnv
- */
-function execute (input, rootEnv = null) {
-  console.time('Compilation');
-  const actions = parser.parse(input);
-  console.timeEnd('Compilation');
+class Interpreter {
+  executeProgram (program) {
+    console.time('Compilation');
+    const actions = parser.parse(program);
+    console.timeEnd('Compilation');
 
-  rootEnv = rootEnv ?? new Environment();
+    const rootEnvironment = this.createRootEnvironment();
 
-  console.time('Runtime');
-  performActions(rootEnv, actions);
-  console.timeEnd('Runtime');
+    console.time('Runtime');
+    performActions(rootEnvironment, actions);
+    console.timeEnd('Runtime');
+
+    return rootEnvironment.getReturn();
+  }
+
+  createRootEnvironment() {
+    return new Environment();
+  }
 }
 
 module.exports = {
-  execute
+  Interpreter
 };
