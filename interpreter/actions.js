@@ -48,6 +48,35 @@ function actionReturn (env, actionData) {
 }
 
 /**
+ * @param {Environment} env
+ * @param {{}} actionData
+ */
+function evalForEach(env, actionData) {
+  const array = evalExpression(env, actionData.array);
+
+  Object.keys(array).forEach(key => {
+    env.assign(actionData.each_index, key)
+    env.assign(actionData.each_value, array[key]);
+
+    performActions(env, actionData.loop_code);
+  });
+}
+
+/**
+ * @param {Environment} env
+ * @param {{}} actionData
+ */
+function assignArrayValue(env, actionData) {
+  const array = evalExpression(env, actionData.array);
+  if (typeof array !== 'object') {
+    return null;
+  }
+
+  const key = evalExpression(env, actionData.index);
+  array[key] = evalExpression(env, actionData.value);
+}
+
+/**
  * @param {String} type
  * @returns {function(Environment,{})}
  */
@@ -58,6 +87,8 @@ function getActionCallableFromType (type) {
     case 'while': return actionWhile;
     case 'lone_expression': return actionLoneExpression;
     case 'return': return actionReturn;
+    case 'for_each': return evalForEach;
+    case 'assign_array_value': return assignArrayValue;
 
     default: err.UnknownActionType(type);
   }

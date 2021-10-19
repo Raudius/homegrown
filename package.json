@@ -5,9 +5,10 @@
   "main": "sample/sample.js",
   "scripts": {
     "build": "npm run compile && node sample/sample.js",
+    "build_windows": "npm run compile_windows && node sample/sample.js < sample/sample.hg",
     "compile": "node node_modules/.bin/jison language/grammar.jison -o language/grammar.js",
-    "sample": "node sample/sample.js < sample/sample.hg",
-    "eslint": "eslint --ext .js ."
+    "compile_windows": "node_modules/.bin/jison.cmd language/grammar.jison -o language/grammar.js",
+    "sample": "node sample/sample.js < sample/sample.hg"
   },
   "keywords": [],
   "author": "",
