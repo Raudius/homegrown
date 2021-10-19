@@ -30,6 +30,26 @@
         return ast_action('lone_expression', data);
     }
 
+    function ast_action_assign_array_value(array, index, value) {
+        data = {
+            array: array,
+            index: index,
+            value: value
+        };
+
+        return ast_action('assign_array_value', data);
+    }
+
+    function ast_for_each(index, value, array, loop_code) {
+        data = {
+            each_index: index,
+            each_value: value,
+            array: array,
+            loop_code: loop_code
+        };
+        return ast_action('for_each', data);
+    }
+
     function ast_action_return(expr) {
         data = { expression: expr };
         return ast_action('return', data);
@@ -67,6 +87,40 @@
         return ast_expression('define_func', data);
     }
 
+    function ast_expr_array_contains(value, array) {
+        data = {
+            value: value,
+            array: array
+        };
+
+        return ast_expression('array_contains', data);
+    }
+
+    function ast_expr_array_contains_key(key, array) {
+        data = {
+            key: key,
+            array: array
+        };
+
+        return ast_expression('array_contains_key', data);
+    }
+
+    function ast_expr_raw_array(values) {
+        data = {
+            values: values
+        };
+
+        return ast_expression('raw_array', data);
+    }
+
+    function ast_array_access(array_name, index) {
+        data = {
+            reference: array_name,
+            index: index
+        };
+        return ast_expression('array_access', data);
+    }
+
     function ast_expr_ref(id) {
         data = { reference: id };
         return ast_expression('ref', data);
@@ -78,7 +132,7 @@
 %}
 
 %left '&' '|'
-%nonassoc '<' '>' '<=' '>=' '==' '!='
+%nonassoc '<' '>' '<=' '>=' '==' '!=' t_IN t_INDEXOF
 %left '+' '-'
 %left '*' '/'
 
@@ -121,6 +175,12 @@ action
 
     | func_call_expr
         { $$ = ast_lone_expression($1); }
+
+    | ref o_SQUARE expression c_SQUARE '=' expression
+        { $$ = ast_action_assign_array_value($1, $3, $6); }
+
+    | t_EACH IDENTIFIER ',' IDENTIFIER t_IN ref code_block
+        { $$ = ast_for_each($2, $4, $6, $7); }
     ;
 
 /* Expressions have a value */
@@ -131,6 +191,8 @@ expression
     | ref
     | literal
     | o_BRACKET expression c_BRACKET { $$ = $2 }
+    | array_raw_expr
+    | array_access
     ;
 
 /* Math/logical operations */
@@ -147,18 +209,33 @@ operation_expr
     | expression '!=' expression { $$ = ast_expr_operation($2, $1, $3); }
     | expression '&' expression { $$ = ast_expr_operation($2, $1, $3); }
     | expression '|' expression { $$ = ast_expr_operation($2, $1, $3); }
+    | expression t_IN expression { $$ = ast_expr_array_contains($1, $3); }
+    | expression t_INDEXOF expression { $$ = ast_expr_array_contains_key($1, $3); }
+    ;
+
+
+/* Raw array | e.g. `[1,2,3]` */
+array_raw_expr
+    : o_SQUARE voidable_expr_list c_SQUARE
+        {{ $$ = ast_expr_raw_array($2); }}
     ;
 
 /* Define a function */
 func_define_expr
-    : t_FUN o_BRACKET func_args c_BRACKET code_block
+    : t_FUN o_BRACKET voidable_id_list c_BRACKET code_block
         {{ $$ = ast_expr_define_func($3, $5); }}
     ;
 
 /* Function call */
 func_call_expr
-    : ref o_BRACKET call_args c_BRACKET
+    : ref o_BRACKET voidable_expr_list c_BRACKET
         {{ $$ = ast_expr_call_func($1, $3); }}
+    ;
+
+/** Access an array value */
+array_access
+    : ref o_SQUARE expression c_SQUARE
+        {{ $$ = ast_array_access($1, $3); }}
     ;
 
 /* Reference to a variable. */
@@ -173,7 +250,7 @@ literal
     ;
 
 /* Function arguments in the signature: a list of identifiers (or void) */
-func_args : /* VOID */ | id_list;
+voidable_id_list : /* VOID */ | id_list;
 
 /* List of identifiers */
 id_list
@@ -186,7 +263,7 @@ id_list
     ;
 
 /* Arguments in a function call: a list of expressions (or void) */
-call_args : /* VOID */ | expr_list;
+voidable_expr_list : /* VOID */ | expr_list;
 
 /* List of expressions */
 expr_list
