@@ -19,10 +19,31 @@ str = 'New-line: \n'
 str = 'Tab: \t'
 str = 'Back-slash: \\'
 
+// Multiline
+log('Strings are multiline
+by
+default');
+
 // Using built-in functions declared in root environment
 // See sample.js
 tau = pi * 2
 log('Hello world!')
+
+// Arrays
+arr = [1, 2, 'three', 4.0, 5.1, 'SEVEN?', false]
+log(arr[0])
+
+arr['test'] = 1234567 // Arrays are also associative.
+
+// Check for values/keys in the array
+log('test' in arr)
+log('test' indexof arr)
+
+// Iterate over array
+each k,v in arr {
+  log(k + '->' + v)
+}
+
 
 // Function declaration
 sum = fun (a,b) {
