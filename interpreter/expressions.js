@@ -46,6 +46,60 @@ function evalFuncDefinition (env, expression) {
 }
 
 /**
+ * @param {Environment} env
+ * @param {{}} expression
+ * @returns {Function}
+ */
+function evalRawArray (env, expression) {
+  const array = {};
+  for (const key in expression.values) {
+    array[key] = evalExpression(env, expression.values[key]);
+  }
+
+  return array;
+}
+
+/**
+ * @param {Environment} env
+ * @param {{}} expression
+ */
+function evalArrayAccess (env, expression) {
+  const index = evalExpression(env, expression.index);
+  if (index < 0) {
+    return null;
+  }
+
+  const array = evalExpression(env, expression.reference);
+  if (!array || index >= array.length) {
+    return null;
+  }
+
+  return array[index];
+}
+
+/**
+ * @param {Environment} env
+ * @param {{}} expression
+ */
+function evalArrayContains(env, expression) {
+  const array = evalExpression(env, expression.array);
+  const key = evalExpression(env, expression.value);
+
+  return Object.values(array).includes(key);
+}
+
+/**
+ * @param {Environment} env
+ * @param {{}} expression
+ */
+function evalArrayContainsKey(env, expression) {
+  const array = evalExpression(env, expression.array);
+  const key = evalExpression(env, expression.key);
+
+  return Object.keys(array).includes(key);
+}
+
+/**
  * Evaluate the result of an operation.
  *
  * @param {Environment} env
@@ -124,6 +178,10 @@ function getEvalFunction (type) {
     case 'define_func': return evalFuncDefinition;
     case 'call_func': return evalFuncCall;
     case 'operation': return evalOperation;
+    case 'raw_array': return evalRawArray;
+    case 'array_access': return evalArrayAccess;
+    case 'array_contains': return evalArrayContains;
+    case 'array_contains_key': return evalArrayContainsKey;
   }
 
   err.UnknownExpressionType(type);
