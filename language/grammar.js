@@ -214,27 +214,27 @@ parse: function parse(input) {
     }
 
     function ast_action_conditional(condition, actions) {
-        data = { condition: condition, actions: actions };
+        const data = { condition: condition, actions: actions };
         return ast_action('conditional', data);
     }
 
     function ast_action_while(condition, actions) {
-        data = { condition: condition, actions: actions };
+        const data = { condition: condition, actions: actions };
         return ast_action('while', data);
     }
 
     function ast_action_assign(id, expr) {
-        data = { identifier: id, expression: expr};
+        const data = { identifier: id, expression: expr};
         return ast_action('assign', data);
     }
 
     function ast_lone_expression(expression) {
-        data = { expression: expression };
+        const data = { expression: expression };
         return ast_action('lone_expression', data);
     }
 
     function ast_action_assign_array_value(array, index, value) {
-        data = {
+        const data = {
             array: array,
             index: index,
             value: value
@@ -244,7 +244,7 @@ parse: function parse(input) {
     }
 
     function ast_for_each(index, value, array, loop_code) {
-        data = {
+        const data = {
             each_index: index,
             each_value: value,
             array: array,
@@ -254,7 +254,7 @@ parse: function parse(input) {
     }
 
     function ast_action_return(expr) {
-        data = { expression: expr };
+        const data = { expression: expr };
         return ast_action('return', data);
     }
 
@@ -263,7 +263,7 @@ parse: function parse(input) {
     }
 
     function ast_expr_operation(operand, term1, term2) {
-        data = {
+        const data = {
             operand: operand,
             term1: term1,
             term2: term2
@@ -273,7 +273,7 @@ parse: function parse(input) {
     }
 
     function ast_expr_call_func(func_name, func_args) {
-        data = {
+        const data = {
             function: func_name,
             arguments: func_args
         };
@@ -282,7 +282,7 @@ parse: function parse(input) {
     }
 
     function ast_expr_define_func(func_args, func_body) {
-        data = {
+        const data = {
             arguments: func_args,
             body: func_body
         };
@@ -291,7 +291,7 @@ parse: function parse(input) {
     }
 
     function ast_expr_array_contains(value, array) {
-        data = {
+        const data = {
             value: value,
             array: array
         };
@@ -300,7 +300,7 @@ parse: function parse(input) {
     }
 
     function ast_expr_array_contains_key(key, array) {
-        data = {
+        const data = {
             key: key,
             array: array
         };
@@ -309,7 +309,7 @@ parse: function parse(input) {
     }
 
     function ast_expr_raw_array(values) {
-        data = {
+        const data = {
             values: values
         };
 
@@ -317,7 +317,7 @@ parse: function parse(input) {
     }
 
     function ast_array_access(array_name, index) {
-        data = {
+        const data = {
             reference: array_name,
             index: index
         };
@@ -325,7 +325,7 @@ parse: function parse(input) {
     }
 
     function ast_expr_ref(id) {
-        data = { reference: id };
+        const data = { reference: id };
         return ast_expression('ref', data);
     }
 
@@ -336,22 +336,5 @@ parse: function parse(input) {
 function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;
 return new Parser;
 })();
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = grammar;
-exports.Parser = grammar.Parser;
-exports.parse = function () { return grammar.parse.apply(grammar, arguments); }
-exports.main = function commonjsMain (args) {
-    if (!args[1])
-        throw new Error('Usage: '+args[0]+' FILE');
-    var source, cwd;
-    if (typeof process !== 'undefined') {
-        source = require('fs').readFileSync(require('path').resolve(args[1]), "utf8");
-    } else {
-        source = require("file").path(require("file").cwd()).join(args[1]).read({charset: "utf-8"});
-    }
-    return exports.parser.parse(source);
-}
-if (typeof module !== 'undefined' && require.main === module) {
-  exports.main(typeof process !== 'undefined' ? process.argv.slice(1) : require("system").args);
-}
-}
+
+export default grammar;

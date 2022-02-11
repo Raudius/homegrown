@@ -1,11 +1,11 @@
-const Lexer = require('lex');
-const symbols = require('./syntax');
-const Parser = require('./grammar').Parser;
+import grammar from './grammar.js';
+import { SYMBOLS, META_SYMBOLS } from './syntax.js';
+import Lexer from 'lex';
 
 /**
  * Initiate the parser and pass our lexer to it.
  */
-const parser = new Parser();
+const parser = new grammar.Parser();
 const lexer = new Lexer();
 parser.lexer = lexer;
 
@@ -18,16 +18,16 @@ lexer.addRule(/\n/, () => { lineNumber++; });
 /**
  * Add Meta rules
  */
-for (const symbolType in symbols.META_SYMBOLS) {
-  const syntax = symbols.META_SYMBOLS[symbolType];
+for (const symbolType in META_SYMBOLS) {
+  const syntax = META_SYMBOLS[symbolType];
   lexer.addRule(syntax, () => {});
 }
 
 /**
  * Add Symbol rules
  */
-for (const symbolType in symbols.SYMBOLS) {
-  const syntax = symbols.SYMBOLS[symbolType];
+for (const symbolType in SYMBOLS) {
+  const syntax = SYMBOLS[symbolType];
   lexer.addRule(syntax, function (lexeme) {
     // console.log(symbol_type + ' | ' + lexeme);
     this.yytext = lexeme;
@@ -49,10 +49,6 @@ lexer.addRule(/./, (lexeme) => {
  * @param {String} input
  * @returns {*}
  */
-function parse (input) {
+export function parse (input) {
   return parser.parse(input);
 }
-
-module.exports = {
-  parse
-};

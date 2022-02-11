@@ -8,7 +8,7 @@ const KEY_RETURN = '__return';
  * The root environment is created before the program is run, and can contain
  * pre-defined functions and values.
  */
-class Environment {
+export class Environment {
   /**
    * @param {Environment} parent
    */
@@ -73,7 +73,3 @@ class Environment {
     return this.fetch(KEY_RETURN);
   }
 }
-
-module.exports = {
-  Environment
-};

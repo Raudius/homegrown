@@ -1,21 +1,19 @@
 {
   "name": "homegrown",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "sample/sample.js",
+  "type": "module",
   "scripts": {
-    "build": "npm run compile && node sample/sample.js",
-    "build_windows": "npm run compile_windows && node sample/sample.js < sample/sample.hg",
-    "compile": "node node_modules/.bin/jison language/grammar.jison -o language/grammar.js",
-    "compile_windows": "node_modules/.bin/jison.cmd language/grammar.jison -o language/grammar.js",
     "sample": "node sample/sample.js < sample/sample.hg"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "lex": "^1.7.9",
-    "jison": "^0.3.10"
+    "browserify": "^17.0.0",
+    "jison": "^0.3.10",
+    "lex": "^1.7.9"
   },
   "devDependencies": {
     "eslint": "^7.24.0",

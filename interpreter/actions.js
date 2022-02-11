@@ -1,3 +1,5 @@
+import { evalExpression } from './expressions.js';
+import { ERRORS as err } from './errors.js';
 
 /**
  * @param {Environment} env
@@ -107,7 +109,7 @@ function performAction (env, action) {
  * @param {Environment} env
  * @param {[]} actions
  */
-function performActions (env, actions) {
+export function performActions (env, actions) {
   for (let i = 0; i < actions.length; i++) {
     performAction(env, actions[i]);
     if (env.hasAssign('__return')) {
@@ -115,10 +117,3 @@ function performActions (env, actions) {
     }
   }
 }
-
-module.exports = {
-  performActions
-};
-
-const evalExpression = require('./expressions').evalExpression;
-const err = require('./errors');

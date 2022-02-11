@@ -1,11 +1,11 @@
-const parser = require('../language/parser');
-const performActions = require('./actions').performActions;
-const Environment = require('./environment').Environment;
+import { parse } from '../language/parser.js';
+import { performActions } from './actions.js';
+import { Environment } from './environment.js';
 
-class Interpreter {
+export class Interpreter {
   executeProgram (program, environment = null) {
     console.time('Compilation');
-    const actions = parser.parse(program);
+    const actions = parse(program);
     console.timeEnd('Compilation');
 
     const rootEnvironment = environment ?? this.createRootEnvironment();
@@ -21,7 +21,3 @@ class Interpreter {
     return new Environment();
   }
 }
-
-module.exports = {
-  Interpreter
-};

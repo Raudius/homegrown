@@ -11,27 +11,27 @@
     }
 
     function ast_action_conditional(condition, actions) {
-        data = { condition: condition, actions: actions };
+        const data = { condition: condition, actions: actions };
         return ast_action('conditional', data);
     }
 
     function ast_action_while(condition, actions) {
-        data = { condition: condition, actions: actions };
+        const data = { condition: condition, actions: actions };
         return ast_action('while', data);
     }
 
     function ast_action_assign(id, expr) {
-        data = { identifier: id, expression: expr};
+        const data = { identifier: id, expression: expr};
         return ast_action('assign', data);
     }
 
     function ast_lone_expression(expression) {
-        data = { expression: expression };
+        const data = { expression: expression };
         return ast_action('lone_expression', data);
     }
 
     function ast_action_assign_array_value(array, index, value) {
-        data = {
+        const data = {
             array: array,
             index: index,
             value: value
@@ -41,7 +41,7 @@
     }
 
     function ast_for_each(index, value, array, loop_code) {
-        data = {
+        const data = {
             each_index: index,
             each_value: value,
             array: array,
@@ -51,7 +51,7 @@
     }
 
     function ast_action_return(expr) {
-        data = { expression: expr };
+        const data = { expression: expr };
         return ast_action('return', data);
     }
 
@@ -60,7 +60,7 @@
     }
 
     function ast_expr_operation(operand, term1, term2) {
-        data = {
+        const data = {
             operand: operand,
             term1: term1,
             term2: term2
@@ -70,7 +70,7 @@
     }
 
     function ast_expr_call_func(func_name, func_args) {
-        data = {
+        const data = {
             function: func_name,
             arguments: func_args
         };
@@ -79,7 +79,7 @@
     }
 
     function ast_expr_define_func(func_args, func_body) {
-        data = {
+        const data = {
             arguments: func_args,
             body: func_body
         };
@@ -88,7 +88,7 @@
     }
 
     function ast_expr_array_contains(value, array) {
-        data = {
+        const data = {
             value: value,
             array: array
         };
@@ -97,7 +97,7 @@
     }
 
     function ast_expr_array_contains_key(key, array) {
-        data = {
+        const data = {
             key: key,
             array: array
         };
@@ -106,7 +106,7 @@
     }
 
     function ast_expr_raw_array(values) {
-        data = {
+        const data = {
             values: values
         };
 
@@ -114,7 +114,7 @@
     }
 
     function ast_array_access(array_name, index) {
-        data = {
+        const data = {
             reference: array_name,
             index: index
         };
@@ -122,7 +122,7 @@
     }
 
     function ast_expr_ref(id) {
-        data = { reference: id };
+        const data = { reference: id };
         return ast_expression('ref', data);
     }
 

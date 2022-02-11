@@ -1,6 +1,6 @@
-const Interpreter = require('../interpreter/interpreter').Interpreter;
-const Environment = require('../interpreter/environment').Environment;
-const fs = require('fs');
+import { Interpreter } from '../interpreter/interpreter.js';
+import { Environment } from '../interpreter/environment.js';
+import fs from 'fs';
 
 // Create interpreter
 class SampleInterpreter extends Interpreter {
