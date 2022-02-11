@@ -6,7 +6,7 @@ function errLanguage (msg) {
   throw new Error('Language error: ' + msg);
 }
 
-module.exports = {
+export const ERRORS = {
   UnknownOperation: (symbol) => {
     errRuntime(`Unknown operand "${symbol}"`);
   },

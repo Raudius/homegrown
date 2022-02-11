@@ -1,7 +1,7 @@
 /**
  * Export language symbols in precedence order.
  */
-const SYMBOLS = {
+export const SYMBOLS = {
   EOF: /$/,
 
   /* Casings */
@@ -55,13 +55,8 @@ const SYMBOLS = {
  * These are expressions that do not need to be tokenized but still need parsing.
  * They are simply the syntactic sugar of the language.
  */
-const META_SYMBOLS = {
+export const META_SYMBOLS = {
   Comment: /\/\/.*/,
   SemiColon: /;/,
   WhiteSpace: /\s/
-};
-
-module.exports = {
-  SYMBOLS,
-  META_SYMBOLS
 };

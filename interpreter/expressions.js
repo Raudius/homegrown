@@ -1,5 +1,6 @@
-const Environment = require('./environment').Environment;
-const err = require('./errors');
+import { Environment } from './environment.js';
+import { ERRORS as err } from './errors.js';
+import { performActions } from './actions.js';
 
 /**
  * Replace the 'escaped' characters with the expected characters.
@@ -194,14 +195,8 @@ function getEvalFunction (type) {
  * @param {{}} expression
  * @returns {Function|string|number|boolean|null}
  */
-function evalExpression (env, expression) {
+export function evalExpression (env, expression) {
   const type = expression.expression_type;
   const evalFunction = getEvalFunction(type);
   return evalFunction(env, expression.data);
 }
-
-module.exports = {
-  evalExpression
-};
-
-const performActions = require('./actions').performActions;
