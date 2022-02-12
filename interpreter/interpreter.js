@@ -14,7 +14,7 @@ export class Interpreter {
     performActions(rootEnvironment, actions);
     console.timeEnd('Runtime');
 
-    return rootEnvironment.getReturn();
+    return rootEnvironment;
   }
 
   createRootEnvironment() {

@@ -18,8 +18,8 @@ const interpreter = new SampleInterpreter();
 const program = fs.readFileSync(0, 'utf-8');
 
 // Execute program
-const exitMessage = interpreter.executeProgram(program);
-console.log('Exit message: ' + exitMessage);
+const exitEnvironment = interpreter.executeProgram(program);
 
-// View final program state
-// console.log(root_env.assigns);
+// View the return value and final state
+console.log('Exit message: ' + exitEnvironment.getReturn());
+// console.log(exitEnvironment.assigns);
