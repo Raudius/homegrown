@@ -3,7 +3,7 @@ import { performActions } from './actions.js';
 import { Environment } from './environment.js';
 
 export class Interpreter {
-  executeProgram (program, environment = null) {
+  async executeProgram (program, environment = null) {
     console.time('Compilation');
     const actions = parse(program);
     console.timeEnd('Compilation');
@@ -14,10 +14,12 @@ export class Interpreter {
     performActions(rootEnvironment, actions);
     console.timeEnd('Runtime');
 
+    await Promise.all(rootEnvironment.promises);
+
     return rootEnvironment;
   }
 
-  createRootEnvironment() {
+  createRootEnvironment () {
     return new Environment();
   }
 }

@@ -53,11 +53,11 @@ function actionReturn (env, actionData) {
  * @param {Environment} env
  * @param {{}} actionData
  */
-function evalForEach(env, actionData) {
+function evalForEach (env, actionData) {
   const array = evalExpression(env, actionData.array);
 
   Object.keys(array).forEach(key => {
-    env.assign(actionData.each_index, key)
+    env.assign(actionData.each_index, key);
     env.assign(actionData.each_value, array[key]);
 
     performActions(env, actionData.loop_code);
@@ -68,7 +68,7 @@ function evalForEach(env, actionData) {
  * @param {Environment} env
  * @param {{}} actionData
  */
-function assignArrayValue(env, actionData) {
+function assignArrayValue (env, actionData) {
   const array = evalExpression(env, actionData.array);
   if (typeof array !== 'object') {
     return null;
@@ -76,6 +76,20 @@ function assignArrayValue(env, actionData) {
 
   const key = evalExpression(env, actionData.index);
   array[key] = evalExpression(env, actionData.value);
+}
+
+function resolvePromise (env, actionData) {
+  const promise = Promise.resolve(evalExpression(env, actionData.promise));
+
+  const promiseWrap = Promise.resolve(promise).then(function () {
+    const f = evalExpression(env, actionData.success_callback);
+    f?.apply(this, arguments);
+  }).catch(function () {
+    const f = evalExpression(env, actionData.failure_callback);
+    f?.apply(this, arguments);
+  });
+
+  env.registerPromise(promiseWrap);
 }
 
 /**
@@ -91,6 +105,7 @@ function getActionCallableFromType (type) {
     case 'return': return actionReturn;
     case 'for_each': return evalForEach;
     case 'assign_array_value': return assignArrayValue;
+    case 'promise': return resolvePromise;
 
     default: err.UnknownActionType(type);
   }

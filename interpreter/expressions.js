@@ -82,7 +82,7 @@ function evalArrayAccess (env, expression) {
  * @param {Environment} env
  * @param {{}} expression
  */
-function evalArrayContains(env, expression) {
+function evalArrayContains (env, expression) {
   const array = evalExpression(env, expression.array);
   const key = evalExpression(env, expression.value);
 
@@ -93,7 +93,7 @@ function evalArrayContains(env, expression) {
  * @param {Environment} env
  * @param {{}} expression
  */
-function evalArrayContainsKey(env, expression) {
+function evalArrayContainsKey (env, expression) {
   const array = evalExpression(env, expression.array);
   const key = evalExpression(env, expression.key);
 
@@ -138,7 +138,7 @@ function evalOperation (env, expression) {
  */
 function evalFuncCall (env, expression) {
   const func = evalExpression(env, expression.function);
-  const args = expression.arguments.map(ex => { return evalExpression(env, ex); });
+  const args = (expression.arguments ?? []).map(ex => { return evalExpression(env, ex); });
   return func.apply(this, args);
 }
 

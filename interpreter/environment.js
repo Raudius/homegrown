@@ -15,6 +15,7 @@ export class Environment {
   constructor (parent = null) {
     this.parent = parent;
     this.assigns = {};
+    this.promises = [];
   }
 
   /**
@@ -71,5 +72,28 @@ export class Environment {
    */
   getReturn () {
     return this.fetch(KEY_RETURN);
+  }
+
+  /**
+   * Returns the result of calling the function with the given parameters.
+   *
+   * @param {string} functionName
+   * @param {[]} args
+   * @returns {*}
+   */
+  callFunction (functionName, args) {
+    const func = this.fetch(functionName);
+    if (func instanceof Function) {
+      return func.apply(this, args);
+    }
+
+    return null;
+  }
+
+  /**
+   * @param {Promise} promise
+   */
+  registerPromise (promise) {
+    this.promises.push(promise);
   }
 }
