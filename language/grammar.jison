@@ -55,6 +55,16 @@
         return ast_action('return', data);
     }
 
+    function ast_promise(promise, success_callback, failure_callback) {
+        const data = {
+            promise: promise,
+            success_callback: success_callback,
+            failure_callback: failure_callback
+        };
+
+        return ast_action('promise', data);
+    }
+
     function ast_expression(type, data) {
         return { expression_type: type, data: data };
     }
@@ -181,12 +191,16 @@ action
 
     | t_EACH IDENTIFIER ',' IDENTIFIER t_IN ref code_block
         { $$ = ast_for_each($2, $4, $6, $7); }
+
+    | '@' expression '<' ref  ',' ref '>'
+        {{ $$ = ast_promise($2, $4, $6); }}
     ;
 
 /* Expressions have a value */
 expression
     : operation_expr
     | func_call_expr
+    | func_call_async_expr
     | func_define_expr
     | ref
     | literal
