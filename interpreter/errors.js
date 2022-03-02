@@ -21,5 +21,9 @@ export const ERRORS = {
 
   ArgumentMismatch: () => {
     errRuntime('Provided arguments don\'t match method signature');
+  },
+
+  UnknownAssignable: () => {
+    errRuntime('Could not determine the assignable variable.');
   }
 };

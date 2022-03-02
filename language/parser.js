@@ -29,7 +29,6 @@ for (const symbolType in META_SYMBOLS) {
 for (const symbolType in SYMBOLS) {
   const syntax = SYMBOLS[symbolType];
   lexer.addRule(syntax, function (lexeme) {
-    // console.log(symbol_type + ' | ' + lexeme);
     this.yytext = lexeme;
     this.yylineno = lineNumber;
     return symbolType;

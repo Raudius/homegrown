@@ -7,6 +7,9 @@
 /* AST generator functions */
 %{
     function ast_action(name, data) {
+    console.log ( name );
+
+    console.dir(data, { depth: null });
         return { action_type: name, data: data };
     }
 
@@ -30,13 +33,14 @@
         return ast_action('lone_expression', data);
     }
 
-    function ast_assign_value(assignable, value) {
+    function ast_action_assign_array_value(array, index, value) {
         const data = {
-            assignable: assignable,
+            array: array,
+            index: index,
             value: value
         };
 
-        return ast_action('ast_assign_value', data);
+        return ast_action('assign_array_value', data);
     }
 
     function ast_for_each(index, value, array, loop_code) {
@@ -54,7 +58,20 @@
         return ast_action('return', data);
     }
 
+    function ast_promise(promise, success_callback, failure_callback) {
+        const data = {
+            promise: promise,
+            success_callback: success_callback,
+            failure_callback: failure_callback
+        };
+
+        return ast_action('promise', data);
+    }
+
     function ast_expression(type, data) {
+
+    console.log ( type );
+    console.dir(data, { depth: null });
         return { expression_type: type, data: data };
     }
 
@@ -71,7 +88,7 @@
     function ast_expr_call_func(func_name, func_args) {
         const data = {
             function: func_name,
-            args: func_args
+            arguments: func_args
         };
 
         return ast_expression('call_func', data);
@@ -79,7 +96,7 @@
 
     function ast_expr_define_func(func_args, func_body) {
         const data = {
-            args: func_args,
+            arguments: func_args,
             body: func_body
         };
 
@@ -112,20 +129,21 @@
         return ast_expression('raw_array', data);
     }
 
+    function ast_array_access(array_name, index) {
+        const data = {
+            reference: array_name,
+            index: index
+        };
+        return ast_expression('array_access', data);
+    }
+
+    function ast_expr_ref(id) {
+        const data = { reference: id };
+        return ast_expression('ref', data);
+    }
+
     function ast_expr_literal(value) {
         return ast_expression('literal', value);
-    }
-
-    function ast_expr_read_assignable(assignable) {
-        const data = { assignable: assignable };
-        return ast_expression('read_assignable', data);
-    }
-
-    function ast_assignable(container, identifier) {
-        return {
-            container: container,
-            identifier: identifier
-        }
     }
 %}
 
@@ -133,6 +151,7 @@
 %nonassoc '<' '>' '<=' '>=' '==' '!=' t_IN t_INDEXOF t_IF t_WHILE t_RETURN
 %left '+' '-'
 %left '*' '/'
+%right o_BRACKET o_SQUARE '.'
 
 $start expressions
 
@@ -165,14 +184,17 @@ action
     | t_WHILE expression code_block
         { $$ = ast_action_while($2, $3); }
 
+    | IDENTIFIER '=' expression ';'
+        { $$ = ast_action_assign($1, $3); }
+
     | t_RETURN expression
         { $$ = ast_action_return($2); }
 
-    | func_call_expr
+    | func_call_expr ';'
         { $$ = ast_lone_expression($1); }
 
-    | assignable '=' expression
-        { $$ = ast_assign_value($1, $3); }
+    | ref o_SQUARE expression c_SQUARE '=' expression ';'
+        { $$ = ast_action_assign_array_value($1, $3, $6); }
 
     | t_EACH IDENTIFIER ',' IDENTIFIER t_IN ref code_block
         { $$ = ast_for_each($2, $4, $6, $7); }
@@ -181,18 +203,14 @@ action
 /* Expressions have a value */
 expression
     : operation_expr
+    | func_call_expr
+    | func_call_async_expr
     | func_define_expr
+    | ref
     | literal
     | array_raw_expr
-    | assignable {{ $$ = ast_expr_read_assignable($1); }}
-    | func_call_expr
-    ;
-
-/* Expressions that are effectively accessing a value */
-assignable
-    : assignable o_SQUARE expression c_SQUARE   {{ $$ = ast_assignable($1, $3); }}
-    | assignable '.' literal_identifier         {{ $$ = ast_assignable($1, $3); }}
-    | literal_identifier                        {{ $$ = ast_assignable(null, $1); }}
+    | array_access
+    | dot_access
     ;
 
 /* Math/logical operations */
@@ -229,10 +247,23 @@ func_define_expr
 
 /* Function call */
 func_call_expr
-    : assignable o_BRACKET voidable_expr_list c_BRACKET
+    : expression o_BRACKET voidable_expr_list c_BRACKET
         {{ $$ = ast_expr_call_func($1, $3); }}
     ;
 
+/** Access an array value */
+array_access
+    : expression o_SQUARE expression c_SQUARE
+        {{ $$ = ast_array_access($1, $3); }}
+    ;
+
+dot_access
+    : expression '.' literal_identifier
+        {{ $$ = ast_array_access($1, $3); }}
+    ;
+
+/* Reference to a variable. */
+ref : IDENTIFIER {{ $$ = ast_expr_ref($1); }};
 
 /* Literals */
 literal
