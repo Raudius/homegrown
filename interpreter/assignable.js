@@ -33,7 +33,7 @@ class Assignable {
 /**
  *
  * @param {Environment} env
- * @param {{}} assignable - AST object containing an assignable
+ * @param {{}} data - AST object containing an assignable
  */
 export function evalAssignable (env, data) {
   if (!('identifier' in data)) {

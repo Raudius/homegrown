@@ -12,9 +12,9 @@ export class Interpreter {
 
     console.time('Runtime');
     performActions(rootEnvironment, actions);
-    console.timeEnd('Runtime');
 
     await Promise.all(rootEnvironment.promises);
+    console.timeEnd('Runtime');
 
     return rootEnvironment;
   }
