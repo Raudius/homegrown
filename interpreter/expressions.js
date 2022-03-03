@@ -1,6 +1,7 @@
 import { Environment } from './environment.js';
 import { ERRORS as err } from './errors.js';
 import { performActions } from './actions.js';
+import { evalAssignable } from './assignable.js';
 
 /**
  * Replace the 'escaped' characters with the expected characters.
@@ -22,7 +23,7 @@ function escapeCharacters (str) {
  * @returns {Environment}
  */
 function createEnvironmentForFunction (env, args, vals) {
-  if (args.length !== vals.length) {
+  if (args.length > vals.length) {
     err.ArgumentMismatch();
   }
   const newEnv = new Environment(env);
@@ -39,10 +40,12 @@ function createEnvironmentForFunction (env, args, vals) {
  * @returns {Function}
  */
 function evalFuncDefinition (env, expression) {
-  return (...argVals) => {
-    const newEnv = createEnvironmentForFunction(env, expression.arguments, argVals);
+  return function () {
+    const args = expression.args ?? [];
+    const argsVals = arguments ?? [];
+    const newEnv = createEnvironmentForFunction(env, args, argsVals);
     performActions(newEnv, expression.body);
-    return newEnv.fetch('__return');
+    return newEnv.getReturn();
   };
 }
 
@@ -64,25 +67,7 @@ function evalRawArray (env, expression) {
  * @param {Environment} env
  * @param {{}} expression
  */
-function evalArrayAccess (env, expression) {
-  const index = evalExpression(env, expression.index);
-  if (index < 0) {
-    return null;
-  }
-
-  const array = evalExpression(env, expression.reference);
-  if (!array || index >= array.length) {
-    return null;
-  }
-
-  return array[index];
-}
-
-/**
- * @param {Environment} env
- * @param {{}} expression
- */
-function evalArrayContains(env, expression) {
+function evalArrayContains (env, expression) {
   const array = evalExpression(env, expression.array);
   const key = evalExpression(env, expression.value);
 
@@ -93,7 +78,7 @@ function evalArrayContains(env, expression) {
  * @param {Environment} env
  * @param {{}} expression
  */
-function evalArrayContainsKey(env, expression) {
+function evalArrayContainsKey (env, expression) {
   const array = evalExpression(env, expression.array);
   const key = evalExpression(env, expression.key);
 
@@ -137,21 +122,31 @@ function evalOperation (env, expression) {
  * @returns {Function|string|number|boolean|null}
  */
 function evalFuncCall (env, expression) {
-  const func = evalExpression(env, expression.function);
-  const args = expression.arguments.map(ex => { return evalExpression(env, ex); });
-  return func.apply(this, args);
+
+
+  const assignable = evalAssignable(env, expression.function);
+
+  const func = assignable.read();
+  const container = assignable.container?.read();
+  const args = (expression.args ?? []).map(ex => { return evalExpression(env, ex); });
+
+  if (container instanceof Promise) {
+    env.registerPromise(container.finally());
+  }
+
+  return func.apply(container, args);
 }
 
 /**
- * Returns the value of the referred identifier.
+ * Returns the value of the referred assignable.
  *
  * @param {Environment} env
  * @param {{}} data
  * @returns {Function|string|number|boolean|null}
  */
-function evalReference (env, data) {
-  const id = data.reference;
-  return env.fetch(id);
+function evalAssignableValue (env, data) {
+  const assignable = evalAssignable(env, data.assignable);
+  return assignable.read();
 }
 
 /**
@@ -175,17 +170,31 @@ function evalLiteral (env, data) {
 function getEvalFunction (type) {
   switch (type) {
     case 'literal': return evalLiteral;
-    case 'ref': return evalReference;
+    case 'read_assignable': return evalAssignableValue;
     case 'define_func': return evalFuncDefinition;
     case 'call_func': return evalFuncCall;
     case 'operation': return evalOperation;
     case 'raw_array': return evalRawArray;
-    case 'array_access': return evalArrayAccess;
     case 'array_contains': return evalArrayContains;
     case 'array_contains_key': return evalArrayContainsKey;
   }
 
   err.UnknownExpressionType(type);
+}
+
+/**
+ * Returns the container of an expression: if the expression is a member of an object it returns the object.
+ *
+ * @param {Environment} env
+ * @param {{}} expression
+ * @returns {Function|string|number|boolean|null}
+ */
+export function evalExpressionContainer (env, expression) {
+  if (!expression.data.container) {
+    return null;
+  }
+
+  return evalExpression(env, expression.data.container);
 }
 
 /**

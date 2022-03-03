@@ -2,6 +2,10 @@ import { Interpreter } from '../interpreter/interpreter.js';
 import { Environment } from '../interpreter/environment.js';
 import fs from 'fs';
 
+async function wait (time) {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
 // Create interpreter
 class SampleInterpreter extends Interpreter {
   createRootEnvironment () {
@@ -9,6 +13,7 @@ class SampleInterpreter extends Interpreter {
     // Assign built-in functions/variables
     env.assign('log', console.log);
     env.assign('pi', Math.PI);
+    env.assign('wait', wait);
     return env;
   }
 }
@@ -18,8 +23,6 @@ const interpreter = new SampleInterpreter();
 const program = fs.readFileSync(0, 'utf-8');
 
 // Execute program
-const exitEnvironment = interpreter.executeProgram(program);
-
-// View the return value and final state
-console.log('Exit message: ' + exitEnvironment.getReturn());
-// console.log(exitEnvironment.assigns);
+interpreter.executeProgram(program).then(exitEnvironment => {
+  console.log('Exit message: ' + exitEnvironment.getReturn());
+});

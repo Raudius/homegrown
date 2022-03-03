@@ -15,6 +15,7 @@ export class Environment {
   constructor (parent = null) {
     this.parent = parent;
     this.assigns = {};
+    this.promises = [];
   }
 
   /**
@@ -71,5 +72,12 @@ export class Environment {
    */
   getReturn () {
     return this.fetch(KEY_RETURN);
+  }
+
+  /**
+   * @param {Promise} promise
+   */
+  registerPromise (promise) {
+    this.promises.push(promise);
   }
 }

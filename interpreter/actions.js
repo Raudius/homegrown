@@ -1,15 +1,6 @@
 import { evalExpression } from './expressions.js';
 import { ERRORS as err } from './errors.js';
-
-/**
- * @param {Environment} env
- * @param {{}} actionData
- */
-function actionAssign (env, actionData) {
-  const k = actionData.identifier;
-  const v = evalExpression(env, actionData.expression);
-  env.assign(k, v);
-}
+import { evalAssignable } from './assignable.js';
 
 /**
  * @param {Environment} env
@@ -53,11 +44,11 @@ function actionReturn (env, actionData) {
  * @param {Environment} env
  * @param {{}} actionData
  */
-function evalForEach(env, actionData) {
+function evalForEach (env, actionData) {
   const array = evalExpression(env, actionData.array);
 
   Object.keys(array).forEach(key => {
-    env.assign(actionData.each_index, key)
+    env.assign(actionData.each_index, key);
     env.assign(actionData.each_value, array[key]);
 
     performActions(env, actionData.loop_code);
@@ -68,14 +59,11 @@ function evalForEach(env, actionData) {
  * @param {Environment} env
  * @param {{}} actionData
  */
-function assignArrayValue(env, actionData) {
-  const array = evalExpression(env, actionData.array);
-  if (typeof array !== 'object') {
-    return null;
-  }
+function assignValue (env, actionData) {
+  const assignable = evalAssignable(env, actionData.assignable);
+  const value = evalExpression(env, actionData.value);
 
-  const key = evalExpression(env, actionData.index);
-  array[key] = evalExpression(env, actionData.value);
+  assignable.assign(value);
 }
 
 /**
@@ -84,13 +72,12 @@ function assignArrayValue(env, actionData) {
  */
 function getActionCallableFromType (type) {
   switch (type) {
-    case 'assign': return actionAssign;
     case 'conditional': return actionConditional;
     case 'while': return actionWhile;
     case 'lone_expression': return actionLoneExpression;
     case 'return': return actionReturn;
     case 'for_each': return evalForEach;
-    case 'assign_array_value': return assignArrayValue;
+    case 'ast_assign_value': return assignValue;
 
     default: err.UnknownActionType(type);
   }
